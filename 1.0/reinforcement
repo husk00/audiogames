@@ -1,0 +1,43 @@
+a 4 
+punto medio
+espacio>mapa:
+peninsula iberica, centro/arte/creación/industiàl>laboral.
+El proyecto:AG(AudioGames*)
+
+La posibilidad de desarollar un proyecto dentro de una residencia siempre es interesante. Dentro de los ciclos diarios de vida rompe con las anormalidades inrumpendo en un tiempo<->espacio otro, distante de tu $HOME.
+Hoy es un punto zero. El azimuth de una semna instensa llena de aspiraciones, deseos y fallos.
+Somos dos en este momento, cada uno con su tarea y un tiempo para desarollarla. Carlos corre, va rapido, en un istante lo pierdo de vista.
+De repente vuelve a aprecer, fresco y descansado, doblando unas curvas que yo alcanzaré no dentro de dos dias por lo meno.
+	>Carlos() está desarollando la parte de visualizión 3d. 
+		>>Carlos() usa blender y realiza con este herramientas su imaginario. AG requiere que se visualize en una panatalla el movimiento del jugador y de los objectos sonoros en el tablero. El jugador es un cilindo, de forma de facilitar l'efecto rotación de la cabeza. Los objectos sonoro son bolas de tres colores: azul, amarillo y rojo. Carlos empieza construyendo el tablero, dibujando un primer esbozo en "mypaint", software de diseño libre. Pronto nos damos cuenta de como el tablero está ya decidido por limites tecnologicos y de que hay poco que elegir. AG funziona usando dos kinect microsoft puestas en el piso de forma especular, haciendo un seguimiento del jugador y mapeando la Z y la X de su posición.
+Dicho seguimiento es un capitulo importante de estos reiforcements, por lo cual lo trataremos en breve.
+
+>volvemos al tablero. 
+El angulo de visión de las kinects nos imponen dibujar un esagono, con dos triangulos isósceles que se prolongan en dos lados. Al final queda bonito aunque algo pequeño, por lo meno en su referencia real; ya veremos la virtual! 
+El proceso de creación del tablero queda gravado come material adjunto de este escrito además de ser un pequeña prueba de la capacidad del efecto timelapsis escrito por Carlos() para editar videos con Blender.
+
+[poner videos tabler0]
+ 
+A partir del tablero empezamos a centrarnos cada uno en lo suyo. Luca() se dedica al seguimiento del jugador. Escoger kinect ahora mismo quire decir poder utilizar un montñon de software libre y de codigo abierto para manipular la imagen y cumplir con la tarea requerida. Processing, openframework, puredata, python, cynder. Todos los framework de desarollo de entornos interactivos han hecho la carrera para llegar a poder trabajar comodamente con la camara. Gracias al driver opensource libfreenect es posible hoy en dia accedere a todas las funciones de la camara de forma estable. Usando el driver en parte privativo OpenNI es incluso muy rapido crear sistema de seguimiento del esqueletro. AG tiene en este momento una semana para desarollarse. EL dia 11 de abril lo presentamos al festival in-sonora en MAdrid. Los ultimos dias de esta parte de la residencia vendrán varios* a miar el estadio de las obras con el deseo de probarla. AG está en nuestra cabeza desde hace demasiado tiempo como para seguir esperando: quieremos jugar ya!
+
+>El plano es partir el desarollo en dos fases: en la primera se produce un prototipo utilizando algunas herramienta que supostamente nos facilitan el trabajo. De aquí hemos decidido usar openNI. 
+>>EL primer problema es que OpenNI no soporta actualmente mas de una kinect. Así que debemos usar dos ordenadores, uno para cada kinect.
+Así que dividimos el tablero en dos hemisferios, norte y sur, de forma que el ordenador sur rastrea la parte inferior y envia los datos al norte. Curiosa relación: lo dice mucho de la referencias espaciales en el que nos criamos. 
+
+[video timelipse lelgada en laboral]
+
+El ordenador norte se encarga de recibir esta información, la x y la z del jugador, y junto a los datos del hemispherio norte supostamente deberia enviar todo bien ordenado al Blender, por medio del protocol open sound control. Al dia de hoy Luca() no lo ha logrado todavia. 
+
+>>>La reunión con Euridice es el primer problema: la conexión en su casa no nos deja usar conferencias así que pasamos al mobil. Euridice() no está en Gijón pero AG la requiere. A partir de este encuentro empiezan a llegar mas Problemas. En concreto de/para Luca(). Los datos que OSCeleton envia cambian cada rato. Ademaás siendo un programa pensado para hacer tracking del esqueletro (que a nosotras no nos importa) se mantiene en busqueda costante de este hasta que lo encuentre.
+>>>Cuando una persona entre en la visión de OSCeleton este empieza enviando una mensaje OSC /user/ID, donde el ID es incremental a partir de uno. Cada vez que lo pierde genera uno o vuelve al mismo, depiende del tiempo de espera (imaginamos). Modificamos el codigo y logramos que el usuario deceteado sea siempre el mismo
+
+>>>[cut]<<<
+
+La noche trae consejo y nuevas posibilidades se concretizan en la fuerza de un algoritmo pensado con una colectividad de individualidades nunca vistas pero conocidas por el espacio virtual compartido. Así que despues de gozar en hackear OSCeleton [quitar el mensage /user incremental y dejar uno unico] y de las libertades del software libre decidimos abandonar la herramienta y ponernos las pilas con un tracking que sea especifico del entorno/condiciones donde nos estamos moviendo. 
+A partir del objecto pix_freenect de Mathias Kronember para puredata elaboramos un parche de algoritmos en forma de cajas conectadas que analiza la imagen de la camara. A esta imagen applicamos el filtro pix_opencv_contoursBundaries de la libreria pix_opencv desarollada por Yves degoyon y Lluis gomez i Bigorda. Así estrapolamos el area extacta donde se encuentra la persona en frente de la camara. Recortamos esta porción de la imagen para pasarla al analisi de los pixels. Es chistoso como esta parte tan simple conceptualmente ha llevado Luca() cerca de la locura, manejando un mundo de cordinadas en continuo cambio lidiando con las diferentes forma de devolver dados de cada uno de las funciones. El recorte para por una función que separa los pixeles por lo tres canales de color, rojo, verde, y azul. En realidas contamos con dos solo porqué el azul no es un color interesante por nuestro fin. En cada frame leemos el valor de estos pixeles desde su array() para applicar una formula magica encontrada en la red al cargo de Philippe NoseQue, para convertir estos numeros en distacia desde la camara. La Z! distancia espacial, lo que supone usar una camara de vision 3d. La x la tenemos desde la  analisi opencv. Toca hacerle una corexión trigonometrica para que se adapte a la profundidad. Esta información empaquetada llega al Bender Game En‌gine por medio de un protocol de comunicación llamado OSC. Por fin vemos el muñejo, avatar del jugador, moverse. Todavia falta la parte mas interesante: el audio.
+
+Los dos dias que quedan lo dedicamos a afinar el sistema de sonido 3d proprio del Blender Game Engine. No suena mal aqunque actualmente hay una limitación importante: La espacialización parece funcionar en los 180 grados frontales al jugador. Actualmente no hay forma de reconocer si una bola está adelante o atrás en nuestro espacio de juego. De momento pero está bien: funciona y sobre todo es jugable. Meterse en este espacio cambia radicalmente la percepción espacial: de repente los 4 metro cuadratos se hacen gigantes y ya al segundo paso te quedas perdidas. Esto funciona!
+A ver que dirán los ciegos cuando vendran a probarla.
+
+
+

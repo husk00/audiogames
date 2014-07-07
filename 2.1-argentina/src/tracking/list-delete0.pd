@@ -1,0 +1,32 @@
+#N canvas 1 89 543 472 10;
+#X msg 223 141 0.1 0.2 0.3 0 0.1 0 0.3 0 0 0.6;
+#X obj 202 221 sel 0;
+#X obj 183 194 list-map;
+#X obj 135 276 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
+-1;
+#X obj 344 279 bng 15 250 50 0 empty empty empty 0 -6 0 8 -262144 -1
+-1;
+#X obj 135 361 list append;
+#X obj 300 323 t l;
+#X obj 183 317 list prepend;
+#X obj 169 149 t b l b;
+#X obj 168 101 inlet;
+#X obj 70 329 list-mean;
+#X obj 19 380 print;
+#X obj 215 357 list-geometric-mean;
+#X obj 403 353 print geo;
+#X obj 154 407 outlet;
+#X connect 0 0 8 0;
+#X connect 1 1 7 0;
+#X connect 2 1 1 0;
+#X connect 3 0 5 0;
+#X connect 4 0 7 1;
+#X connect 5 0 10 0;
+#X connect 6 0 7 1;
+#X connect 7 0 6 0;
+#X connect 7 0 5 1;
+#X connect 8 0 3 0;
+#X connect 8 1 2 0;
+#X connect 8 2 4 0;
+#X connect 9 0 8 0;
+#X connect 10 0 14 0;

@@ -1,0 +1,4 @@
+
+ mejor para estar seguro que osceleton se vuelve a abrir si cae
+es ponerlo dentro de un loop bash:
+while true ; do ./osceleton ; done 

@@ -1,0 +1,37 @@
+app
+
+blender
+
+carga configuracion
+	lista bolas
+	lista niveles
+
+game.sendOSC_languaje()
+
+menu > lanzas juego (le dices el nivel)
+
+
+
+empieza el partida
+
+partida()
+	game.create_balls()
+	
+	game.sendOSC_level()
+	
+	turno
+		player.receive_position()
+		player.check_collision()
+		
+		player.check_area()
+		
+		player.update_bonus_bpm(bolabonus)
+		player.update_bonus_counter()
+		player.update_special_balls()
+
+
+
+		
+
+	
+

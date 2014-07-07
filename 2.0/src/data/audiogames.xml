@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Audiogames Version="2">
+ <language>Spanish</language>
+ <kinects>
+	<number>2</number>
+ </kinects>
+  <tracker>    
+<Name>Norte</Name>
+    <ip>192.168.106.6</ip>
+    <puerto>7711</puerto>
+</tracker>
+  
+ <tracker>
+  <Name>Sur</Name> 
+  <ip>127.0.0.1</ip>
+    <puerto>7712</puerto>
+     </tracker>
+ 
+  <Orientation>
+    <ajuste>184</ajuste>
+  </Orientation>
+
+ 
+ 
+</Audiogames>

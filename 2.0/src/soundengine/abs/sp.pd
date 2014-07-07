@@ -1,0 +1,15 @@
+#N canvas 69 303 450 300 10;
+#X obj 116 220 iem_send;
+#X msg 159 184 set r\$1.position;
+#X text 222 84 send angle and module to specific snd_obj;
+#X obj 159 163 f \$1;
+#X obj 158 130 loadbang;
+#X obj 157 110 initbang;
+#X obj 115 62 mrpeach/routeOSC /\$1;
+#X obj 117 41 r sndPosition.global;
+#X connect 1 0 0 1;
+#X connect 3 0 1 0;
+#X connect 4 0 3 0;
+#X connect 5 0 3 0;
+#X connect 6 0 0 0;
+#X connect 7 0 6 0;

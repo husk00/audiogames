@@ -1,0 +1,6 @@
+- el posicionamiento del azimuth lateral de un sonido (derecha/izquierda) se realiza a partir del iternaural time difference y del iterarnaural level difference. Es decir el delay que intercorre en el sonido a llegar en el interior del oreja y el amortiguado que intercorre en llegar dentro la oreja (far ear).
+- la deteción del elevación de un sonido depende sobre todo del efecto de filtro hecho por la cabeza, los hombros, el torso y la oreja externa. Este se llama HRTF (head related transfer function).
+- la percepción de la distancia depende del filtro de la cabeza, del amplitud y del echo en el entorno.
+
+
+[dependencies: iem_matrix]

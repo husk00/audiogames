@@ -1,0 +1,6 @@
+#N canvas 0 0 450 300 10;
+#X obj 31 83 inlet;
+#X obj 31 145 outlet;
+#X obj 31 113 mrpeach/routeOSC \$1;
+#X connect 0 0 2 0;
+#X connect 2 0 1 0;

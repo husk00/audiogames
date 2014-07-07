@@ -1,0 +1,236 @@
+----------------------------------fichero de configuración
+
+kinect_N    	>   	ip, puerto   (para blender)
+		>	trim x y
+		> 	trim z
+
+kinect_S   	>   	ip, puerto   (para blender)
+		>	trim x y
+		> 	trim z
+
+blender 	>   	ip, puerto  (para escuchar pd)
+		>	ip, puerto  (para escuchar andOSC)
+		> 	ajuste norte
+		>	idioma (para construir el path del audio)
+		>	audio selector (blender/pd)
+		> 	numero de kinects
+
+		>  	bpm base
+		
+		>	diccionarios (sound_ob, levels)
+
+----------------------------------comunicaciones por OSC
+
+pd_kinect_N	>	blender 	/tracker/norte (x,y)
+pd_kinect_N	>	blender 	/tracker/sur (x,y)
+
+andOSC		>	blender		/ori (fff)
+
+blender		> 	pd (al inicio)  for i in level[snd_objs]: 
+						sendbundle /game/create [id-snd_obj, nota, octava, bpm, alcance ]     (creación de nivel a partir de los diccionarios)
+					/game/language (string)				
+		>	pd (bundle cada frame que estemos dentro o en el borde)
+					[
+					/game/sndobj/id-bola (ang, mod)
+					/game/bpm
+					]	
+	>	pd (cada vez que cambie dentro/borde/fuera)
+					[
+					/player/in
+					/player/out
+					/player/border
+					]			
+	>	pd (al crear/destruir bolas):
+					/sndobj/create (id-bola) [esto en realidad es el mensaje /game/create repetido, allí ya tengo toda la info necesaria]
+
+					/sndobj/delete (id-bola)	
+
+--------------------------------Global variables
+
+bpm_base
+Languaje
+
+
+----------------------------------objects
+
+sndobj()
+
+properties:
+	id-bola
+	nombre (y ruta de fichero audio)
+	puntoscomer
+	puntoschocar
+	estado (vivo/muerto)
+	rol (buena/mala/neutra)
+
+	bpm???
+
+sndOBjXML properties:
+	id-bola
+	puntoscomer
+	puntoschocar
+	rol (buena/mala/neutra)
+	bpm
+	color #ffffff
+	frecuencia(como suenma[nota])
+	
+	
+
+
+
+
+dinamicas 	> actor, rigid body, masa, radius, damping, collision bounds, lock position z
+forma		> mesh
+material 	> friction, elasticity, damping
+luz 		> frecuencia, intensidad-ganacia, pulso
+
+si bonus
+	bpm_bonus
+	bonus_duration
+
+metodos:
+	create_ball(id-bola):
+		crea bola
+		envia osc-create
+	remove_ball(id-bola):
+		borra bola
+		envia osc-delete
+
+
+player()
+
+properties:
+	puntos
+	estado (NORMAL, BONUS, DEAD)
+	in, out, border
+	position
+	orientation
+	bonus_counter = 0
+	malus_counter = 0
+metodos
+
+	def receive_position():
+		rec_osc_norte 	> property
+		rec_osc_sur
+		rec_osc_movil
+		calcula posicion y actualiza
+
+	def check_collision():    # (sensor collision property id-bola)
+		if id-bola.rol = buena:
+			player['estado']='BONUS'
+			player['puntos'] =+ id-bola['puntoscomer']
+			id_bola.removeball()
+			player.bonus_counter = 200
+			game['bpm'] =+ id-bola.bpm_bonus
+		if id-bola.rol = mala:
+			negra.remove_ball()
+			if player['estado']='NORMAL': 
+				player['puntos'] =+ id-bola['puntoscomer']
+				player['estado']='DEAD':
+				info de los puntos						
+				vuelta al menu
+			if player['estado']='BONUS':
+				player['puntos'] =+ id-bola['puntoschocar']
+				player['estado']='NORMAL'
+				game['bpm'] = bpm_base
+				player.bonus_counter =  0
+				player['malus_counter'] = 30
+		if id-bola.rol = neutra:
+			if player['estado']='BONUS':
+				id_bola.removeball()
+				player['puntos'] =+ id-bola['puntoscomer']
+				check fin de nivel
+					cambio de nivel +1						
+					vuelta al menu
+			if player['estado']='NORMAL':
+				sonido de choque
+				puntos chocar	
+
+	def update_bonus_bpm(bolabonus):
+		if player['bonus_counter'] = 0:
+			player['estado'] = 'NORMAL'
+			game['bpm'] = bmp_base
+		if player['bonus_counter'] < 10:
+			game['bpm'] =- (bolabonus['bpm_bonus']-bpm_base)/10)
+
+	def update_bonus_counter():
+		if player['bonus_counter'] > 0:
+			player['bonus_counter'] =- 1
+		
+	def update_special_balls():
+		if player['malus_counter'] = 0
+			blanca.createball()
+			negra.createball()
+		else:
+			player['malus_counter'] =- 1
+
+	check_area():
+			cambio out: 
+				send_oscmessage(player['estado'])
+				apaga sonido y color
+			cambio in:
+				send_oscmessage(player['estado'])
+				enciende sonido y color	
+			else:
+				send_oscbundle():		
+			cambio a borde >    OSC, electrocutar
+
+	send_oscbundle():
+		crea el bundle
+		for i in ball_positions():
+			i.append al bundle
+		/bpm  append al bundle
+		enviar bundle
+
+	send_oscmessage(estado):
+		
+	ball_positions()
+		calcula posicion de las bolas respecto al jugador
+		lista de mensajes OSC con /id-bola (ang, mod)
+
+	def receive_position():
+	def check_collision():    # (sensor collision property id-bola)
+	def update_bonus_bpm(bolabonus):
+	def update_bonus_counter():
+	def update_special_balls():
+	check_area():
+	send_oscbundle():
+	send_oscmessage(estado):
+	ball_positions()
+
+
+game()
+
+properties:
+
+	game['bpm'] = bpm_base
+
+
+metodos:
+	readconfiguration():
+		generatedict_ball
+			diccionario sound_ob
+			(id-bola, sonido, color, frec-parpadeo, friccion, masa)
+		generatedict_levels
+			diccionario levels
+			(nºnivel, lista id-bolas)
+	return dicts
+	
+	sendOSC_languaje():
+
+	sendOSC_level():
+
+	create_balls():
+		for i in listabolas:
+			i.create_ball()
+
+
+
+
+
+
+
+
+
+
+
